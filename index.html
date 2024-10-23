@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blagues API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    button,
+    input {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .blague {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Blagues API</h1>
+
+    <!-- Afficher toutes les blagues -->
+    <div>
+      <h2>Toutes les blagues</h2>
+      <button onclick="getAllJokes()">Voir toutes les blagues</button>
+      <div id="all-jokes"></div>
+    </div>
+
+    <!-- Ajouter une nouvelle blague -->
+    <div>
+      <h2>Ajouter une blague</h2>
+      <input type="text" id="question" placeholder="Entrez la question" required>
+      <input type="text" id="reponse" placeholder="Entrez la réponse" required>
+      <button onclick="addJoke()">Ajouter une blague</button>
+      <div id="add-result"></div>
+    </div>
+
+    <!-- Récupérer une blague par ID -->
+    <div>
+      <h2>Récupérer une blague par ID</h2>
+      <input type="number" id="joke-id" placeholder="Entrez l'ID de la blague">
+      <button onclick="getJokeById()">Voir la blague</button>
+      <div id="joke-by-id"></div>
+    </div>
+
+    <!-- Afficher une blague aléatoire -->
+    <div>
+      <h2>Blague aléatoire</h2>
+      <button onclick="getRandomJoke()">Voir une blague aléatoire</button>
+      <div id="random-joke"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiUrl = 'https://carambar-co-4swo.onrender.com/';
+
+    // Fonction pour récupérer toutes les blagues
+    function getAllJokes() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const jokesDiv = document.getElementById('all-jokes');
+          jokesDiv.innerHTML = '';
+          data.forEach(joke => {
+            jokesDiv.innerHTML += `<div class="blague"><strong>Question :</strong> ${joke.question}<br><strong>Réponse :</strong> ${joke.reponse}</div>`;
+          });
+        })
+        .catch(error => console.error('Erreur lors de la récupération des blagues:', error));
+    }
+
+    // Fonction pour ajouter une nouvelle blague
+    function addJoke() {
+      const question = document.getElementById('question').value;
+      const reponse = document.getElementById('reponse').value;
+
+      if (question && reponse) {
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ question, reponse })
+        })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('add-result').innerHTML = `<div class="blague">Blague ajoutée avec succès : ${data.question} - ${data.reponse}</div>`;
+            document.getElementById('question').value = '';
+            document.getElementById('reponse').value = '';
+          })
+          .catch(error => console.error('Erreur lors de l\'ajout de la blague:', error));
+      } else {
+        document.getElementById('add-result').innerHTML = 'Veuillez remplir les deux champs.';
+      }
+    }
+
+    // Fonction pour récupérer une blague par ID
+    function getJokeById() {
+      const jokeId = document.getElementById('joke-id').value;
+
+      if (jokeId) {
+        fetch(`${apiUrl}/${jokeId}`)
+          .then(response => {
+            if (!response.ok) throw new Error('Blague non trouvée');
+            return response.json();
+          })
+          .then(data => {
+            document.getElementById('joke-by-id').innerHTML = `<div class="blague"><strong>Question :</strong> ${data.question}<br><strong>Réponse :</strong> ${data.reponse}</div>`;
+          })
+          .catch(error => document.getElementById('joke-by-id').innerHTML = error.message);
+      } else {
+        document.getElementById('joke-by-id').innerHTML = 'Veuillez entrer un ID valide.';
+      }
+    }
+
+    // Fonction pour récupérer une blague aléatoire
+    function getRandomJoke() {
+      fetch(`${apiUrl}/random`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('random-joke').innerHTML = `<div class="blague"><strong>Question :</strong> ${data.question}<br><strong>Réponse :</strong> ${data.reponse}</div>`;
+        })
+        .catch(error => console.error('Erreur lors de la récupération de la blague aléatoire:', error));
+    }
+  </script>
+</body>
+
+</html>
