@@ -178,7 +178,7 @@ app.get('/v1/blagues/:id', async (req, res) => {
  *       200:
  *         description: Une blague aléatoire
  */
-app.get('/v1/blagues/random', async (req, res) => {
+app.get('/v1/blague/random', async (req, res) => {
   try {
     const count = await Joke.count();
     const randomIndex = Math.floor(Math.random() * count);
