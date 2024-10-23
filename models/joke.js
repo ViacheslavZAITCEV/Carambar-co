@@ -1,3 +1,4 @@
+// models/joke.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -5,7 +6,11 @@ const sequelize = new Sequelize({
 });
 
 const Joke = sequelize.define('Joke', {
-  text: {
+  question: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  reponse: {
     type: DataTypes.STRING,
     allowNull: false
   }

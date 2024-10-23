@@ -30,9 +30,34 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Synchronisation de la base de données
-sequelize.sync().then(() => {
+// Fonction pour insérer des blagues préremplies
+const prepopulateJokes = async () => {
+  const jokes = [
+    { question: "Quelle est la femelle du hamster ?", reponse: "L’Amsterdam" },
+    { question: "Que dit un oignon quand il se cogne ?", reponse: "Aïe" },
+    { question: "Quel est l'animal le plus heureux ?", reponse: "Le hibou, parce que sa femme est chouette." },
+    { question: "Pourquoi le football c'est rigolo ?", reponse: "Parce que Thierry en rit" },
+    { question: "Quel est le sport le plus fruité ?", reponse: "La boxe, parce que tu te prends des pêches dans la poire et tu tombes dans les pommes." },
+    { question: "Que se fait un Schtroumpf quand il tombe ?", reponse: "Un Bleu" },
+    { question: "Quel est le comble pour un marin ?", reponse: "Avoir le nez qui coule" },
+    { question: "Qu'est ce que les enfants usent le plus à l'école ?", reponse: "Le professeur" },
+    { question: "Quel est le sport le plus silencieux ?", reponse: "Le para-chuuuut" },
+    { question: "Quel est le comble pour un joueur de bowling ?", reponse: "C’est de perdre la boule" }
+  ];
+
+  for (let joke of jokes) {
+    const existingJoke = await Joke.findOne({ where: { question: joke.question } });
+    if (!existingJoke) {
+      await Joke.create(joke);
+    }
+  }
+};
+
+// Synchronisation de la base de données et préremplissage des blagues
+sequelize.sync().then(async () => {
   console.log('Base de données synchronisée');
+  await prepopulateJokes();
+  console.log('Blagues préremplies ajoutées');
 });
 
 // Endpoint pour ajouter une blague (POST /v1/blagues)
@@ -48,7 +73,9 @@ sequelize.sync().then(() => {
  *           schema:
  *             type: object
  *             properties:
- *               text:
+ *               question:
+ *                 type: string
+ *               reponse:
  *                 type: string
  *     responses:
  *       201:
@@ -57,9 +84,9 @@ sequelize.sync().then(() => {
  *         description: Erreur serveur
  */
 app.post('/v1/blagues', async (req, res) => {
-  const { text } = req.body;
+  const { question, reponse } = req.body;
   try {
-    const newJoke = await Joke.create({ text });
+    const newJoke = await Joke.create({ question, reponse });
     res.status(201).json(newJoke);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la création de la blague', error });
@@ -84,7 +111,9 @@ app.post('/v1/blagues', async (req, res) => {
  *                 properties:
  *                   id:
  *                     type: integer
- *                   text:
+ *                   question:
+ *                     type: string
+ *                   reponse:
  *                     type: string
  */
 app.get('/v1/blagues', async (req, res) => {
