@@ -80,11 +80,21 @@ sequelize.sync().then(async () => {
  *     responses:
  *       201:
  *         description: Blague créée
+ *       400:
+ *         description: Données invalides
  *       500:
  *         description: Erreur serveur
  */
 app.post('/v1/blagues', async (req, res) => {
   const { question, reponse } = req.body;
+
+  // Vérification si les champs "question" et "reponse" sont présents et non vides
+  if (!question || question.trim() === '' || !reponse || reponse.trim() === '') {
+    return res.status(400).json({
+      message: 'Les champs "question" et "reponse" sont obligatoires et ne peuvent pas être vides.'
+    });
+  }
+
   try {
     const newJoke = await Joke.create({ question, reponse });
     res.status(201).json(newJoke);
