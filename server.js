@@ -19,7 +19,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'https://carambar-co-4swo.onrender.com/',
       },
     ],
   },
