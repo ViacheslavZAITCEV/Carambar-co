@@ -2,6 +2,9 @@
 
 Une API simple pour gérer des blagues, réalisée avec Node.js, Express, Sequelize et SQLite. Cette API permet d'ajouter, consulter et récupérer des blagues aléatoires.
 
+## Front (GitHub Pages)
+[https://viacheslavzaitcev.github.io/Carambar-co/](https://viacheslavzaitcev.github.io/Carambar-co/)
+
 ## Fonctionnalités
 
 - Ajouter une blague (avec une question et une réponse)
@@ -19,5 +22,4 @@ Une API simple pour gérer des blagues, réalisée avec Node.js, Express, Sequel
 
 ## Documentation API (Swagger)
 [https://carambar-co-4swo.onrender.com/api-docs](https://carambar-co-4swo.onrender.com/api-docs)
-
 
